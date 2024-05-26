@@ -15,25 +15,27 @@ const Resource = ({
   events: Event[];
   setMockEvents: Dispatch<SetStateAction<Event[]>>;
 }) => {
-  const handleDoubleClick = (
-    
-    date: Dayjs
-  ) => {
-    const newEvent: Event = {
-      id: crypto.randomUUID(),
-      title: "New Event",
-      date: dayjs(date).format("YYYY-MM-DD"),
-      bgColor: getRandomTailwindBgColor(),
-      resourceId: resourcesId,
-    };
-    setMockEvents((prev) => [...prev, newEvent]);
-    const currentEventsState = JSON.parse(
-      localStorage.getItem("mock_events") || "[]"
-    );
-    localStorage.setItem(
-      "mock_events",
-      JSON.stringify([...currentEventsState, newEvent])
-    );
+  const handleDoubleClick = (date: Dayjs) => {
+    const new_event = prompt("Enter a new event");
+    console.log(new_event);
+
+    if (new_event !== "" && new_event != null) {
+      const newEvent: Event = {
+        id: crypto.randomUUID(),
+        title: new_event,
+        date: dayjs(date).format("YYYY-MM-DD"),
+        bgColor: getRandomTailwindBgColor(),
+        resourceId: resourcesId,
+      };
+      setMockEvents((prev) => [...prev, newEvent]);
+      const currentEventsState = JSON.parse(
+        localStorage.getItem("mock_events") || "[]"
+      );
+      localStorage.setItem(
+        "mock_events",
+        JSON.stringify([...currentEventsState, newEvent])
+      );
+    }
   };
 
   return (
@@ -51,13 +53,6 @@ const Resource = ({
             (event: Event) =>
               dayjs(date).isSame(event.date) && (
                 <EventComponent key={event.id} event={event} />
-                // <div
-                //   key={i}
-                //   className={`${event.bgColor} rounded pl-1 text-white`}
-                //   data-id={event.id}
-                // >
-                //   {event.title}
-                // </div>
               )
           )}
         </div>
