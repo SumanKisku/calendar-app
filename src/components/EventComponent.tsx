@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { Event, EventsContext } from "../contexts/EventsContext";
 
 const EventComponent = ({ event }: { event: Event }) => {
@@ -17,8 +17,14 @@ const EventComponent = ({ event }: { event: Event }) => {
     }
   };
 
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+    e.dataTransfer.setData("text/plain", event.id);
+  };
+
   return (
     <div
+      draggable
+      onDragStart={handleDragStart}
       onClick={() => handleDelete(event.id)}
       className={`${event.bgColor} rounded pl-1 text-white`}
       data-id={event.id}

@@ -1,7 +1,7 @@
 import dayjs, { Dayjs } from "dayjs";
 import { getRandomTailwindBgColor } from "../utils/colors";
-import { Dispatch, SetStateAction } from "react";
-import { Event } from "../contexts/EventsContext";
+import React, { Dispatch, SetStateAction, useContext } from "react";
+import { Event, EventsContext } from "../contexts/EventsContext";
 import EventComponent from "./EventComponent";
 
 const Resource = ({
@@ -15,9 +15,9 @@ const Resource = ({
   events: Event[];
   setMockEvents: Dispatch<SetStateAction<Event[]>>;
 }) => {
+  const { mockEvents } = useContext(EventsContext);
   const handleDoubleClick = (date: Dayjs) => {
     const new_event = prompt("Enter a new event");
-    console.log(new_event);
 
     if (new_event !== "" && new_event != null) {
       const newEvent: Event = {
@@ -38,6 +38,28 @@ const Resource = ({
     }
   };
 
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>, date: Dayjs) => {
+    e.preventDefault();
+    const eventId = e.dataTransfer.getData("text/plain");
+
+    const updatedEvents = mockEvents.map((event) => {
+      if (event.id === eventId) {
+        return {
+          ...event,
+          date: dayjs(date).format("YYYY-MM-DD"),
+          resourceId: resourcesId,
+        };
+      }
+      return event;
+    });
+    setMockEvents(updatedEvents);
+    localStorage.setItem("mock_events", JSON.stringify(updatedEvents));
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <>
       <div className="w-[190px] sticky left-0 bg-white border z-10 min-h-[62px] font-semibold">
@@ -48,6 +70,8 @@ const Resource = ({
           key={i}
           className="p-1 pb-4 flex flex-col gap-1 border border-solid"
           onDoubleClick={() => handleDoubleClick(date)}
+          onDrop={(e) => handleDrop(e, date)}
+          onDragOver={handleDragOver}
         >
           {events.map(
             (event: Event) =>
