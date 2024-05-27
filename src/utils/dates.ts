@@ -30,16 +30,6 @@ const currentYear = getCurrentYear();
 
 /**
  * This function returns the current month
- * @returns [ "1 Wed", "2 Thu", "3 Fri", "4 Sat", "5 Sun", "6 Mon", "7 Tue", "8 Wed", "9 Thu", "10 Fri", … ]
- */
-// export const currentMonthDays = Array(dayjs().daysInMonth())
-//     .fill(null)
-//     .map(() => {
-//         d++;
-//         return dayjs(new Date(currentYear, currentMonth, d)).format("D ddd");
-//     });
-/**
- * This function returns the current month
  * @returns Array of Dayjs
  */
 export const generateMonthDays = (month = currentMonth, year = currentYear): Dayjs[] => {
