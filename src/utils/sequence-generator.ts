@@ -1,3 +1,8 @@
+/**
+ * Generate A,B,C...Z,AA,AB sequences
+ * @param n take a number for to generate sequence for n
+ * @returns "A" | "B" ... "AA" | "AB" | "ZZ"
+ */
 export const generateSequence = (n: number): string => {
     let result = '';
     while (n > 0) {
