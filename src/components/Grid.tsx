@@ -4,6 +4,8 @@ import { generateMonthDays } from "../utils/dates";
 import dayjs, { Dayjs } from "dayjs";
 import Resource from "./Resource";
 import { Event, EventsContext } from "../contexts/EventsContext";
+import { ResourceContext } from "../contexts/ResourceContext";
+import { generateSequence } from "../utils/sequence-generator";
 
 const colorToday = (
   item: Dayjs,
@@ -14,9 +16,8 @@ const colorToday = (
     : "";
 };
 
-const resources = ["A", "B", "C", "D", "E", "F"];
-
 const Grid = () => {
+  const { resources, setResources } = useContext(ResourceContext);
   const { monthIndex } = useContext(CalendarContext);
   const currentMonthDays = generateMonthDays(monthIndex);
   const [daysInCurrentMonth, setDaysInCurrentMonth] = useState(
@@ -24,6 +25,17 @@ const Grid = () => {
   );
 
   const { mockEvents: MOCK_EVENTS, setMockEvents } = useContext(EventsContext);
+
+  const handleAddResource = () => {
+    console.log(resources.length);
+
+    const newResourceKey = generateSequence(resources.length + 1);
+    setResources([...resources, newResourceKey]);
+    localStorage.setItem(
+      "resources",
+      JSON.stringify([...resources, newResourceKey])
+    );
+  };
 
   useEffect(() => {
     setDaysInCurrentMonth(currentMonthDays.length);
@@ -58,7 +70,12 @@ const Grid = () => {
           />
         );
       })}
-
+      <button
+        className="bg-blue-500 text-white font-semibold p-2 sticky left-0"
+        onClick={() => handleAddResource()}
+      >
+        Add Resource
+      </button>
       {/* Grid content end */}
     </div>
   );
