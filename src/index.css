@@ -9,7 +9,8 @@
 .grid-cols-31 {
     grid-template-columns: 190px repeat(31, minmax(100px, 1fr));
 
-}.grid-template-cols-28 {
+}
+.grid-cols-28 {
     grid-template-columns: 190px repeat(28, minmax(100px, 1fr));
 
 }.grid-cols-29 {
