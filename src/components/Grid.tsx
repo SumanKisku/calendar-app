@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { CalendarContext } from "../contexts/CalenderContext";
 import { generateMonthDays } from "../utils/dates";
 import dayjs, { Dayjs } from "dayjs";
@@ -7,14 +7,8 @@ import { Event, EventsContext } from "../contexts/EventsContext";
 import { ResourceContext } from "../contexts/ResourceContext";
 import { generateSequence } from "../utils/sequence-generator";
 
-const colorToday = (
-  item: Dayjs,
-  today = dayjs(new Date()).format("D ddd YYYY")
-) => {
-  return item.format("D ddd YYYY") === today
-    ? "bg-blue-500 text-white rounded-xl"
-    : "";
-};
+const ifToday = (item: Dayjs, today = dayjs(new Date()).format("D ddd YYYY")) =>
+  item.format("D ddd YYYY") === today;
 
 const Grid = () => {
   const { resources, setResources } = useContext(ResourceContext);
@@ -27,8 +21,6 @@ const Grid = () => {
   const { mockEvents: MOCK_EVENTS, setMockEvents } = useContext(EventsContext);
 
   const handleAddResource = () => {
-    console.log(resources.length);
-
     const newResourceKey = generateSequence(resources.length + 1);
     setResources([...resources, newResourceKey]);
     localStorage.setItem(
@@ -37,8 +29,16 @@ const Grid = () => {
     );
   };
 
+  const today = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setDaysInCurrentMonth(currentMonthDays.length);
+    // scrolls to today
+    today.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "center",
+    });
   }, [currentMonthDays, daysInCurrentMonth]);
 
   return (
@@ -47,13 +47,34 @@ const Grid = () => {
     >
       {/* Grid Header start */}
       <div className="w-[190px] sticky left-0 top-10 border bg-white z-20"></div>
-      {currentMonthDays.map((item, i) => (
-        <div key={i} className="p-1 flex-none border sticky top-10 bg-white">
-          <div className={`pl-2 pr-4 text-center ${colorToday(item)}`}>
-            {item.format("D ddd")}
+      {currentMonthDays.map((item, i) => {
+        if (ifToday(item)) {
+          return (
+            <div
+              key={i}
+              id="today"
+              ref={today}
+              className="p-1 flex-none border sticky top-10 bg-white"
+            >
+              <div
+                id="today"
+                className={
+                  "pl-2 pr-4 text-center bg-blue-500 text-white rounded-xl"
+                }
+              >
+                {item.format("D ddd")}
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div key={i} className="p-1 flex-none border sticky top-10 bg-white">
+            <div className={`pl-2 pr-4 text-center`}>
+              {item.format("D ddd")}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       {/* Grid Header end */}
 
       {/* Grid content start */}
